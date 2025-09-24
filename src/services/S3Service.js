@@ -3,7 +3,9 @@ const {
   CreateMultipartUploadCommand,
   UploadPartCommand,
   CompleteMultipartUploadCommand,
+  GetObjectCommand
 } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const s3 = new S3Client({
   region: "us-east-1",
@@ -76,4 +78,14 @@ const completeUpload = async (streamUuid, filePath, chunkMap) => {
   }
 };
 
-module.exports = { createUploadStream, uploadPart, completeUpload };
+const createFileSignedUrl = async (filePath = "") => {
+  const command = new GetObjectCommand({ Bucket: bucket, Key: filePath })
+
+  const oneDay = 24 * 60 * 60; // 86 400 секунд
+
+  const url = await getSignedUrl(s3, command, { expiresIn: oneDay });
+
+  return url
+}
+
+module.exports = { createUploadStream, uploadPart, completeUpload, createFileSignedUrl };

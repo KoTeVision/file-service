@@ -71,4 +71,19 @@ fileController.post("/finish-upload-stream", async (req, res) => {
   }
 });
 
+fileController.post('/create-file-url', async (req, res) => {
+  try {
+    const { filePath } = req.body;
+
+    const response = await s3Service.createFileSignedUrl(
+      filePath
+    );
+
+    res.status(200).json({ downloadUrl: response })
+  } catch (e) {
+    console.error("FileController error :>> ", e);
+    res.status(400).json({ error: "File url not created!" });
+  }
+})
+
 module.exports = fileController;
