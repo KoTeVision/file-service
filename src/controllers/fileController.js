@@ -9,11 +9,11 @@ const multipart = multer({ storage: multer.memoryStorage() });
 
 fileController.post("/start-upload-stream", async (req, res) => {
   try {
-    const { fileExtension } = req.body;
+    const { fileName } = req.body;
 
-    const fileName = uuidv4();
+    const fileUid = uuidv4();
 
-    const filePath = `${fileName}.${fileExtension}`;
+    const filePath = `${fileUid}_${fileName}`;
 
     const response = await s3Service.createUploadStream(filePath);
 
